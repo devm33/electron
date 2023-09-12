@@ -17,6 +17,7 @@
 #include "mojo/public/cpp/bindings/connector.h"
 #include "mojo/public/cpp/bindings/message.h"
 #include "mojo/public/cpp/bindings/remote.h"
+#include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "shell/browser/event_emitter_mixin.h"
 #include "shell/common/gin_helper/pinnable.h"
 #include "shell/services/node/public/mojom/node_service.mojom.h"
@@ -87,6 +88,8 @@ class UtilityProcessWrapper
   std::unique_ptr<mojo::Connector> connector_;
   blink::MessagePortDescriptor host_port_;
   mojo::Remote<node::mojom::NodeService> node_service_remote_;
+  raw_ptr<ElectronBrowserContext> browser_context_;
+  scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory_;
   base::WeakPtrFactory<UtilityProcessWrapper> weak_factory_{this};
 };
 

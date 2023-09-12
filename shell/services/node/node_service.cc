@@ -36,6 +36,12 @@ NodeService::~NodeService() {
   }
 }
 
+void NodeService::SetURLLoaderFactory(
+    ::mojo::PendingRemote<::network::mojom::URLLoaderFactory>
+        url_loader_factory) {
+  std::cout << "SetURLLoaderFactory" << std::endl;
+}
+
 void NodeService::Initialize(node::mojom::NodeServiceParamsPtr params) {
   if (NodeBindings::IsInitialized())
     return;

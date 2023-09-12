@@ -10,6 +10,11 @@ const fixturesPath = path.resolve(__dirname, 'fixtures', 'api', 'utility-process
 const isWindowsOnArm = process.platform === 'win32' && process.arch === 'arm64';
 
 describe('utilityProcess module', () => {
+  it('devm33', async () => {
+    const child = utilityProcess.fork(path.join(fixturesPath, 'empty.js'));
+    await once(child, 'spawn');
+  });
+
   describe('UtilityProcess constructor', () => {
     it('throws when empty script path is provided', async () => {
       expect(() => {

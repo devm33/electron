@@ -20,6 +20,7 @@
 #include "gin/object_template_builder.h"
 #include "gin/wrappable.h"
 #include "mojo/public/cpp/bindings/pending_receiver.h"
+#include "ppapi/proxy/ppapi_messages.h"
 #include "shell/browser/api/message_port.h"
 #include "shell/browser/javascript_environment.h"
 #include "shell/common/gin_converters/callback_converter.h"
@@ -193,6 +194,9 @@ UtilityProcessWrapper::UtilityProcessWrapper(
       &UtilityProcessWrapper::CloseConnectorPort, weak_factory_.GetWeakPtr()));
 
   node_service_remote_->Initialize(std::move(params));
+
+  url_loader_factory_ = browser_context_->GetURLLoaderFactory();
+  node_service_remote_->SetURLLoaderFactory(url_loader_factory);
 }
 
 UtilityProcessWrapper::~UtilityProcessWrapper() = default;

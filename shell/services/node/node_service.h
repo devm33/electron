@@ -9,6 +9,7 @@
 
 #include "mojo/public/cpp/bindings/pending_receiver.h"
 #include "mojo/public/cpp/bindings/receiver.h"
+#include "services/network/public/mojom/url_loader_factory.mojom.h"
 #include "shell/services/node/public/mojom/node_service.mojom.h"
 
 namespace node {
@@ -34,6 +35,9 @@ class NodeService : public node::mojom::NodeService {
 
   // mojom::NodeService implementation:
   void Initialize(node::mojom::NodeServiceParamsPtr params) override;
+  void SetURLLoaderFactory(
+      ::mojo::PendingRemote<::network::mojom::URLLoaderFactory>
+          url_loader_factory) override;
 
  private:
   bool node_env_stopped_ = false;
