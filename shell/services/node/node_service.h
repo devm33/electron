@@ -41,7 +41,7 @@ class URLLoaderBundle {
       mojo::PendingRemote<network::mojom::URLLoaderFactory> factory,
       mojo::Remote<network::mojom::HostResolver> host_resolver);
   scoped_refptr<network::SharedURLLoaderFactory> GetSharedURLLoaderFactory();
-  mojo::Remote<network::mojom::HostResolver> GetHostResolver();
+  network::mojom::HostResolver* GetHostResolver();
 
  private:
   scoped_refptr<network::SharedURLLoaderFactory> factory_;

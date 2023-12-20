@@ -45,9 +45,9 @@ URLLoaderBundle::GetSharedURLLoaderFactory() {
   return factory_;
 }
 
-mojo::Remote<network::mojom::HostResolver> URLLoaderBundle::GetHostResolver() {
+network::mojom::HostResolver* URLLoaderBundle::GetHostResolver() {
   DCHECK(host_resolver_);
-  return std::move(host_resolver_);
+  return host_resolver_.get();
 }
 
 NodeService::NodeService(
