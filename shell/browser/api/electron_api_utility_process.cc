@@ -14,14 +14,18 @@
 #include "base/process/launch.h"
 #include "base/process/process.h"
 #include "chrome/browser/browser_process.h"
+#include "content/browser/storage_partition_impl.h"
 #include "content/public/browser/child_process_host.h"
 #include "content/public/browser/service_process_host.h"
+#include "content/public/browser/storage_partition.h"
 #include "content/public/common/result_codes.h"
 #include "gin/handle.h"
 #include "gin/object_template_builder.h"
 #include "gin/wrappable.h"
 #include "mojo/public/cpp/bindings/pending_receiver.h"
+#include "shell/browser/api/electron_api_session.h"
 #include "shell/browser/api/message_port.h"
+#include "shell/browser/electron_browser_context.h"
 #include "shell/browser/javascript_environment.h"
 #include "shell/browser/net/system_network_context_manager.h"
 #include "shell/common/gin_converters/callback_converter.h"
@@ -59,6 +63,7 @@ gin::WrapperInfo UtilityProcessWrapper::kWrapperInfo = {
     gin::kEmbedderNativeGin};
 
 UtilityProcessWrapper::UtilityProcessWrapper(
+    v8::Isolate* isolate,
     node::mojom::NodeServiceParamsPtr params,
     std::u16string display_name,
     std::map<IOHandle, IOType> stdio,
@@ -200,6 +205,14 @@ UtilityProcessWrapper::UtilityProcessWrapper(
   loader_params->process_id = pid_;
   loader_params->is_orb_enabled = false;
   loader_params->is_trusted = true;
+  gin::Handle<Session> session = Session::FromPartition(isolate, "");
+  ElectronBrowserContext* browser_context = session->browser_context();
+  content::StoragePartitionImpl* storage_partition =
+      static_cast<content::StoragePartitionImpl*>(
+          browser_context->GetDefaultStoragePartition());
+  loader_params->url_loader_network_observer =
+      storage_partition->CreateAuthCertObserverForServiceWorker(
+          loader_params->process_id);
   network::mojom::NetworkContext* network_context =
       g_browser_process->system_network_context_manager()->GetContext();
   network_context->CreateURLLoaderFactory(
@@ -397,8 +410,8 @@ gin::Handle<UtilityProcessWrapper> UtilityProcessWrapper::Create(
   }
   auto handle = gin::CreateHandle(
       args->isolate(),
-      new UtilityProcessWrapper(std::move(params), display_name,
-                                std::move(stdio), env_map,
+      new UtilityProcessWrapper(args->isolate(), std::move(params),
+                                display_name, std::move(stdio), env_map,
                                 current_working_directory, use_plugin_helper));
   handle->Pin(args->isolate());
   return handle;

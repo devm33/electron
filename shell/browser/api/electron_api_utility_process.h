@@ -56,7 +56,8 @@ class UtilityProcessWrapper
   const char* GetTypeName() override;
 
  private:
-  UtilityProcessWrapper(node::mojom::NodeServiceParamsPtr params,
+  UtilityProcessWrapper(v8::Isolate* isolate,
+                        node::mojom::NodeServiceParamsPtr params,
                         std::u16string display_name,
                         std::map<IOHandle, IOType> stdio,
                         base::EnvironmentMap env_map,
